@@ -1,0 +1,46 @@
+.animate-show,
+.animate-hide {
+  -webkit-transition:all linear 1s;
+  -moz-transition:all linear 1s;
+  -ms-transition:all linear 1s;
+  -o-transition:all linear 1s;
+  transition:all linear 0.5s;
+}
+.checkListPreview .modal-dialog {
+  width: 80% !important;
+}
+.row.indexes>* {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+.modal-body {
+  text-align: center;
+}
+.ng-hide {
+  opacity: 0;
+}
+.ng-enter {
+  transition:0.5s linear all;
+  opacity:0;
+}
+.ng-enter.ng-enter-active {
+  opacity:1;
+}
+.panel {
+  border-radius: 0 !important;
+}
+.table-row.ng-leave {
+  transition:0 linear all;
+  opacity:1;
+}
+.table-row.ng-leave.ng-leave-active {
+  opcacity :0;
+}
+.upload-details p {
+  height:20px;
+  overflow : hidden;
+  margin-bottom : 0;
+  background-color : gray;
+  /*padding-left : 5px;*/
+  text-align: center;
+}

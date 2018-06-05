@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<configuration>	 
+    <DeploymentType>P</DeploymentType>
+	 <ceurl>
+     	<L>http://52.25.206.225/ce/</L>
+     	<P>http://localhost:8085/HMIPlatformCEBase/</P>    
+     	<D>http://52.25.206.225/ce/</D>
+     	<Q>http://52.25.206.225/ce/</Q>
+     	<T>http://52.25.206.225/ce/</T>
+	 </ceurl>
+	 <chatceurl>
+     	<L>http://52.25.206.225/ce/</L>
+     	<P>http://localhost:8085/</P>    
+     	<D>http://52.25.206.225/ce/</D>
+     	<Q>http://52.25.206.225/ce/</Q>
+     	<T>http://52.25.206.225/ce/</T>
+	 </chatceurl>
+	 <availabilitysvcurl>
+     	<L>http://52.25.206.225/ce/</L>
+    <!-- 	<P>https://ec2-35-161-178-34.us-west-2.compute.amazonaws.com/RSMEServices/service/availability/fetchAvailableExpert</P>     --> 
+        <P>https://52.25.206.225:443/RSMEServices/service/availability/fetchAvailableExpert</P>
+     	<D>http://52.25.206.225/ce/</D>
+     	<Q>http://52.25.206.225/ce/</Q>
+     	<T>http://52.25.206.225/ce/</T>
+	 </availabilitysvcurl>
+	  <availabilityupdateurl>
+     	<L>http://52.25.206.225/ce/</L>
+    <!--  	<P>https://ec2-35-161-178-34.us-west-2.compute.amazonaws.com/RSMEServices/service/availability/updateCallStatusForTracking</P> -->    
+        <P>https://52.25.206.225:443/RSMEServices/service/availability/fetchAvailableExpert</P>
+     	<D>http://52.25.206.225/ce/</D>
+     	<Q>http://52.25.206.225/ce/</Q>
+     	<T>http://52.25.206.225/ce/</T>
+	 </availabilityupdateurl>
+	 <ismultiinstance>
+     	<L>false</L>
+     	<P>false</P>    
+     	<D>false</D>
+     	<Q>false</Q>
+     	<T>false</T>
+	 </ismultiinstance>	  
+</configuration>

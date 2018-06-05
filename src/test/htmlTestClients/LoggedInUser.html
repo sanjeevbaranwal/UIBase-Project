@@ -1,0 +1,169 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+.parentDivClass {
+    position:absolute;
+    z-index: 99999;
+
+}
+.draggable-element {
+  cursor:move;
+  position:relative; /* important (all position that's not `static`) */
+}
+
+</style>
+
+</head>
+<body>
+<h2>Click below to open ngGenie</h2>
+<button id="myBtn">ngGenie</button>
+
+<div id="myModal" class="parentDivClass">
+<table id="tableid" width="auto" border="1" align="top" style="display:none;background:#009EE0" >
+<tr>
+<td>
+<span id="draggable-element" class="draggable-element" style="float: right">
+<img src="dragImg.png" ></img>
+</span>
+</td>
+<td>
+<span id="closeimg" style="float: right">
+<img src="closeImg.png" onclick ="closeDialgoue();"></img>
+</span>
+</td>
+</tr>
+</table>
+
+  </div>
+
+
+
+<script>
+
+window.addEventListener('message', function(e) {
+  var iframename = window.parent.document.getElementById('iframe_callback');
+  if(e.data == 'expand')
+  {
+   var wid = iframename.style.width;
+   var len = wid.length;
+   iframename.style.width = parseInt(wid.substring(0,len-2)) +355 + "px";
+   }
+   if(e.data == 'collapse')
+   {
+   var wid = iframename.style.width;
+   var len = wid.length;
+   iframename.style.width = parseInt(wid.substring(0,len-2)) -355 + "px";
+   }
+
+var a = e.data.split("-");
+for (var i = 0; i < a.length; i++)
+{
+	iframename.style.height = a[1]+"px";
+	iframename.style.width = a[2]+"px";
+}
+   
+});
+	
+var selected = null, // Object of the element to be moved
+    x_pos = 0, y_pos = 0, // Stores x & y coordinates of the mouse pointer
+    x_elem = 0, y_elem = 0; // Stores top, left values (edge) of the element
+
+// Will be called when user starts dragging an element
+function _drag_init(elem) {
+    // Store the object of the element which needs to be moved
+    selected = elem;
+    x_elem = x_pos - selected.offsetLeft;
+    y_elem = y_pos - selected.offsetTop;
+}
+
+// Will be called when user dragging an element
+function _move_elem(e) {
+    x_pos = document.all ? window.event.clientX : e.pageX;
+    y_pos = document.all ? window.event.clientY : e.pageY;
+    if (selected !== null) {
+        selected.style.left = (x_pos - x_elem) + 'px';
+        selected.style.top = (y_pos - y_elem) + 'px';
+    }
+}
+
+// Destroy the object when we are done
+function _destroy() {
+    selected = null;
+}
+
+// Bind the functions...
+document.getElementById('draggable-element').onmousedown = function () {
+    _drag_init(document.getElementById('myModal'));
+    return false;
+};
+
+document.onmousemove = _move_elem;
+document.onmouseup = _destroy;
+
+function showChat()
+{
+var mod= document.getElementById("myModal");
+var childs = mod.childNodes;
+for(var i=0; i< childs.length;i++)
+{
+  var child = childs[i];
+  if(child.id == "iframe_callback")
+  {
+  mod.style.display="block";
+  return;
+  }
+}
+ var iframe = document.createElement("IFRAME");
+  iframe.id = "iframe_callback";
+    iframe.name = "myframe";
+    iframe.width = "380px";
+    iframe.height = "510px";
+    iframe.style.margin = "1px";
+    iframe.scrolling = "no";
+	iframe.overflow="hidden";
+    iframe.src = "http://localhost:8080/WebUIBase/dialogue?username=guest&password=wipro@123";
+	
+	var el = document.getElementById('myModal');
+	var closeimage = document.getElementById('tableid');
+	closeimage.style.display="block";
+	
+	el.appendChild(iframe);
+	el.style.display="block";
+	el.style.left = 400 + "px";
+	el.style.top = 25 + "px";
+	}
+
+var btn = document.getElementById("myBtn");
+btn.onclick = function() {
+ showChat();
+}
+
+function autoResize(id){
+    var newheight;
+    var newwidth;
+
+    if(document.getElementById){
+        newheight=document.getElementById(id).contentWindow.document .body.scrollHeight;
+        newwidth=document.getElementById(id).contentWindow.document .body.scrollWidth;
+    }
+
+    document.getElementById(id).height= (newheight) + "px";
+    document.getElementById(id).width= (newwidth) + "px";
+}
+
+function closeDialgoue()
+{
+  var mod= document.getElementById("myModal");
+  var list=document.getElementById("iframe_callback");
+  var parentDiv = list.parentNode;
+  mod.style.display="none";
+  var closeimage = document.getElementById('tableid');
+}
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,105 @@
+<div class=" display-flex min-full-height login-container flex-dir-col">
+  <div class="margin-auto" style="box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);">
+    <div class="text-center display-flex pos-rel flex-dir-col" style="justify-content:flex-end;align-items:center;margin:0 auto 0;background-color:#0099ff;width:450px;">
+      <!-- <img src="static/img/imagine-white.png" alt="ImagineE.png" class="pos-abs" style="top:0;left:0;width:120px;"/> -->
+      <div>
+        <img src="static/img/avatar3.png" alt="" style="border-radius:50%;margin:20px auto 10px;width:175px;"/>
+        <p style="text-align:center;color:#eee;font-size:20px;">Welcome to IMAGINE...<span id="existingUser"></span></p>
+      </div>
+      <span class="pos-abs app-version" style="bottom:11px;right:7px">{{config.appState}}{{config.appVersion}}</span>
+    </div>
+    <div class="text-center display-flex flex-dir-col" style="padding:10px 0 0;justify-content:flex-start;align-items:center;width:450px;background-color:#111; margin: 0 auto;">
+      <div class="center-container" style="width:100%;">
+        <div class="login-box" ng-show="login">
+          <div class="input">
+            <span class="fa fa-user"></span>
+            <input type="text" ng-model="loginId" id="txtLoginId" autocomplete="on" placeholder="Engineer ID" required autofocus>
+          </div>
+          <div class="input">
+            <span class="fa fa-unlock-alt"></span>
+            <input type="password" ng-model="password" id="txtPassword" placeholder="Password" required>
+          </div>
+          <div class="options pos-rel">
+            <input class="w3-check" type="checkbox" ng-model="value" ng-true-value="'true'" ng-false-value="'false'">
+            <span class="cur-pointer no-select" style="font-size:15px;margin-left:10px;" >Remember Me</span>
+            <span class="pos-abs cur-pointer no-select" style="font-size:15px;" id="spanForgotPassword" ng-click="showForgotPasswordPanel()">Forgot Password?</span>
+          </div>
+          <button type="button" ng-click="signIn($event);" ng-disabled = "disableBtn" class="btn btn-block btn-success" id="btnLogin">Login</button>
+        </div>
+        <div class="reset-password-box" ng-show="forgotPassword">
+          <div style="text-align:left;" ng-click="showLoginPanel()">
+            <span class="fa fa-chevron-left go-back"></span>
+          </div>
+          <div class="input">
+            <span class="fa fa-unlock-alt"></span>
+            <input type="password" id="txtDefaultPassword" ng-model="defaultPwd" placeholder="Default Password">
+          </div>
+          <div class="input">
+            <span class="fa fa-lock"></span>
+            <input type="password" id="txtNewPassword" ng-model="newPwd" placeholder="New Password">
+          </div>
+          <div class="input">
+            <span class="fa fa-lock"></span>
+            <input type="password" id="txtConfirmPassword" ng-model="confirmNewPwd" placeholder="Confirm New Password">
+          </div>
+          <button type="button" class="btn btn-block btn-success" id="btnResetPassword" ng-click="resetPassword();">Change Password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="">
+    <button type="button" style="position:absolute;bottom:0" class="btn btn-lg btn-block btn-success" ng-show = "showSuccessMessage" id="btnResetPassword">{{message}}</button>
+    <button type="button" style="position:absolute;bottom:0" class="btn btn-lg btn-block btn-danger" ng-show = "showFailureMessage" id="btnResetPassword">{{message}}</button>
+  </div>
+</div>
+<script type="text/ng-template" id="confirmationPopUP.html">
+  <div class="modal-content"  style="background-color:black;border-radius:0px;color:#ddd;">
+    <div class="modal-header">
+      <h3 class="modal-title">Multi-device Login</h3>
+    </div>
+    <div class="modal-body">
+      <h5>Your logged in on another device. Do you want to force logout on that device and login here?</h5>
+    </div>
+    <div class="modal-footer">
+      <button type="button" ng-click="cancel()" class="btn btn-md btn-default">Cancel</button>
+      <button type="button" ng-click="forceLogin()" class="btn btn-md btn-info">OK</button>
+    </div>
+  </div>
+</script>
+
+<script type="text/ng-template" id="forgotPwdTemplate.html">
+  <div class="modal-content"  style="background-color:black;border-radius:0px;color:#ddd;">
+    <!-- <div class="modal-header">
+    <h3 class="modal-title">Multi-device Login</h3>
+  </div> -->
+  <form name="forgotPwdForm">
+    <div class="modal-body" style="text-align:left;">
+      <h4>Please enter you registered email ID and phone number. Default Password will be send to you email.</h4> <br>
+      <label>Email ID</label>
+      <input style="color:black" type="email" ng-model="data.email"/><br/><br>
+      <label>Phone Number</label>
+      <input style="color:black" type="number" ng-model="data.phnNum" required /><br/><br>
+    </div>
+    <div class="modal-footer">
+      <button type="button" ng-click="cancel()" class="btn btn-md btn-default">Cancel</button>
+      <button type="button" ng-click="submitRequest($event)" class="btn btn-md btn-info" ng-disabled="forgotPwdForm.$invalid">Submit</button>
+    </div>
+  </form>
+</div>
+</script>
+
+<script type="text/ng-template" id="pwdPolicy.html">
+  <div class="modal-content"  style="background-color:black;border-radius:0px;color:#ddd;">
+    <!-- <div class="modal-header">
+    <h3 class="modal-title">Multi-device Login</h3>
+  </div> -->
+  <form name="forgotPwdForm">
+    <div class="modal-body">
+      <h4>{{pwdPolicy}}</h4>
+    </div>
+    <div class="modal-footer">
+      <button type="button" ng-click="cancel()" class="btn btn-md btn-default">OK</button>
+    </div>
+  </form>
+</div>
+</script>

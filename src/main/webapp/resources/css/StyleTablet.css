@@ -1,0 +1,301 @@
+ 
+#tblSuppApp tr td ul
+{
+margin: 0.1px;padding-left: 15px;
+}
+
+.ui-dialog-titlebar-close { 
+   visibility: hidden; 
+ }
+ 
+ 	a:hover {
+	    color: #0F8E5C;
+	    text-decoration: none;
+	} 
+
+.ui-dialog .ui-widget-content {
+		max-width: 600px;
+    	min-width: 320px;
+    	height:100px;
+    	width : 50px;
+}
+    .ui-dialog.ui-widget-content {
+        border:none; 
+         margin: 0;
+	    padding: 0;
+    }
+.ui-dialog-shadow {
+		max-width: 600px;
+    	min-width: 120px;
+    	min-height:255px;
+ 		box-shadow: 0px 2px 5px 5px rgba(0,0,0,0.55); 
+ }
+ .ui-widget-header
+ {
+/*      background: linear-gradient(to bottom, #286f37 0%, #9ab63d 100%); */
+     background: white;
+ }
+ .ui-dialog .ui-dialog-titlebar
+ {
+ 	padding: 0px;
+	background: #00a1e5;
+ }
+ #tblPage
+ 
+ #divTopBlueBar
+        {
+        	height: 35px;
+        	width:auto;
+        	margin-top: 5px;
+        }
+        
+	.red {
+    width: 120px;
+    height: 100%;
+    color: rgb(255,255,255);
+    background: rgb(204, 213, 176);
+    border: 0;
+    float: right;
+	}
+	
+	.red:hover {
+		background: rgb(39,155,45);
+	}
+
+#containingBox
+{
+			height: auto;
+        	width:auto;
+			overflow: hidden;
+}
+        #genieImage
+        {         
+            height: 220px;
+            width: auto;
+            background: #005d7c;
+            box-shadow: 1 0 21 #000000;
+            margin-bottom: -30px;
+            /* -webkit-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75); */
+               
+        }
+		#conversationSection
+        {   
+            height: 98%;
+            color:white;
+/*             width: 100%; */
+            background: white;
+            overflow-y: auto;
+  			overflow-x: hidden;
+  			padding: 0.4em;
+  			font-family: Roboto;
+    		font-size: 12px;
+    		font-family : verdana;
+    		max-width: 600px;
+  			::-webkit-scrollbar {
+      		width: 15px;
+			 padding-top: 10px;
+			}
+        }
+		#genieTyping
+		{
+			height: 5%;
+            width: auto;
+            background: white;
+            padding-left: 1em;
+            visibility: hidden;
+		}
+       
+        #queryArea
+        {
+            height: 70px;
+            width: auto;
+            overflow: hidden;
+        }
+       
+         #userInputText
+        {
+            height: 55px;
+    		margin: 3px;
+            width: 100%;
+            background: white;
+            color: #333333;
+            font-family: verdana;
+            font-size: 13px;
+        }
+        
+/* DIALOG MAIN CONTAINER */
+    .ui-dialog .ui-widget-content {
+         margin: 0;
+	    padding: 0;
+    }
+            
+/* DIALOG TITLE BAR */
+    .ui-dialog.ui-widget-header {
+        border:0;
+        background:none
+         margin: 0;
+    padding: 0;
+    }
+    
+       
+#conversationSection::-webkit-scrollbar{
+width:8px;
+background-color:#cccccc;
+}
+#conversationSection::-webkit-scrollbar-thumb{
+background-color:#333333;
+}
+#conversationSection::-webkit-scrollbar-thumb:hover{
+background-color:#999999;
+border:1px solid #333333;
+}
+#conversationSection::-webkit-scrollbar-thumb:active{
+background-color:#666666;
+border:1px solid #333333;
+}
+#conversationSection::-webkit-scrollbar-track{
+border:1px gray solid;
+-webkit-box-shadow:0 0 2px gray inset;
+}
+    #slide_effect {
+    position: relative;
+    width: 240px;
+    height: 135px;
+    padding: 0.4em;
+  }
+  
+  #slide_out
+  {
+    width: 500px;
+    height: 200px;
+  } 
+    
+    
+    
+  .toggler {
+	position: fixed;
+    height: 0px;
+    z-index:101;    
+  }   
+  #divToggler
+  {
+    padding-left: 0px;
+  }
+  #effect {
+    position: relative;
+    width: 373px;
+    height: 635px;
+    padding: 0.4em;
+    z-index:101;    
+  }
+  #effect h3 {
+    margin: 0;
+    padding: 0.4em;
+    text-align: center;
+  }
+
+	.headerGradient{
+		background: White;
+	}
+    
+	.no-close .ui-dialog-titlebar-close {display: none }
+       
+    .overlay{
+    background:transparent url(resources/images/overlay.png) repeat top left;
+    position:fixed;
+    top:0px;
+    bottom:0px;
+    left:0px;
+    right:0px;
+    z-index:100;
+	}
+			
+		.slow-motion {
+		  @include transition(all 0.4s linear);
+		}
+		.head {
+		  width: 60px;
+		  min-height: 60px;
+		  box-shadow: 0 0 10px rgba(#000,.5);
+		  background: url(../resources/images/head.png) center center no-repeat;
+		  border: 10px solid #2EB135;
+		  background-size: cover;
+		  box-shadow: 0px 0px 15px;
+		}
+		
+		.circle {
+		  border-radius: 50%
+		}
+		
+		.head:hover { 
+		 box-shadow: 0px 0px 30px; 
+		 }
+    
+    .required label:after {
+    color: #e32;
+    content: '*';
+    display:inline;
+}
+
+.formSubmitButton {
+    width: 80px;
+    height: 30px;
+    color: rgb(255,255,255);
+    background: rgb(84,185,72);
+    border: 0;
+    box-shadow: 2px 2px 2px rgba(0,0,0,0.25), inset -2px -2px 2px rgba(0,0,0,0.25);
+	}
+	
+	.formSubmitButton:hover {
+		background: rgb(39,155,45);
+	}
+  
+  #tblPage
+  {
+  	width: 80%
+  }
+  #tblFooter
+ {
+ 	width: 80%
+ }
+  #imgLogo
+  {
+  	height : 47px;
+  	width: 100px;
+  }
+  
+  #divcenter
+  {
+  	margin-left: 15%;
+    float: none;
+  }
+
+  #imgHelpdesk
+  {
+  	height: 100px;
+    width: 150px
+  }
+  
+  #divFooter1
+  {
+      margin-left: 0%;
+  }
+  
+  #divFooter2
+  {
+  	margin-left: 0%;
+  }
+  
+  #draggable {
+    width: 45px;
+    min-height: 45px;
+    border: 6px solid #2EB135;
+}
+#divLinks
+ {
+ 	 margin-left: 2%;
+ }
+  #divLogoimg
+ {
+ 	margin-left: 3%;
+ }

@@ -1,0 +1,905 @@
+if (!window.controllers)
+window.controllers = {};
+function goToRemoteHelp() {
+  var messages = document.getElementById('remoteHelp');
+  var library = document.getElementById('resourceLib');
+  library.style.display = 'none';
+  messages.style.display = 'block';
+}
+
+window.logDataToService = function (logData) {
+  console.log("logData",logData);
+  $.ajax({
+    "method": "POST",
+    "url": "http://" + window.config.server.ip  + ":" + window.config.server.port + "/" + window.config.servicesRoot + "/service/loginDetails/logUserActivityDetails",
+    "contentType": "application/json",
+    "dataType": "json",
+    "data": JSON.stringify(logData),
+    "processData": false
+  }).done(function (data) {
+    console.log(data);
+    if (data && data.result == "SUCCESS") {
+      console.log("INFO: User activity logged successfully.");
+    } else {
+      console.log("ERROR: Failed to log user activity.");
+    }
+  }).fail(function (err) {
+    console.error(err);
+  });
+}
+
+window.controllers.expertHomeController = function(user) {
+  let incomingVideo = document.getElementById('incomingVideo'),
+  incomingAudio = document.getElementById('incomingAudio'),
+  annotationImage = document.querySelector('.annotation-image img'),
+  annotationCanvas = document.querySelector('#annotationCanvas'),
+  mainContainer = document.querySelector('.main'),
+  homeContainer = document.querySelector('.main .home-container'),
+  annotationCallContainer = document.querySelector('.main .annotation-call-container'),
+  videoCallContainer = document.querySelector('.main .video-call-container'),
+  incomingCallContainer = document.querySelector('.main .incoming-call-container'),
+  outgoingCallContainer = document.querySelector('.main .outgoing-call-container'),
+  shareContentContainer = document.querySelector('.main .share-content-container');
+
+  (function createSnapshotsDirectory(done) {
+    fs.stat(__dirname + path.sep + 'snaps', function(err, stat) {
+      if(err && err.code == 'ENOENT') {
+        fs.mkdir(__dirname + path.sep + 'snaps', function (err) {
+          if (err) {
+            console.error(err);
+            return;
+          }
+        });
+      }
+    });
+  })();
+
+  if(window.fa.dom) {
+    window.fa.dom.incomingVideo = incomingVideo;
+    window.fa.dom.incomingAudio = incomingAudio;
+    window.fa.dom.annotationImage = annotationImage;
+    window.fa.dom.annotationCanvas = annotationCanvas;
+    window.fa.dom.mainContainer = mainContainer;
+    window.fa.dom.homeContainer = homeContainer;
+    window.fa.dom.annotationCallContainer = annotationCallContainer;
+    window.fa.dom.videoCallContainer = videoCallContainer;
+    window.fa.dom.incomingCallContainer = incomingCallContainer;
+    window.fa.dom.outgoingCallContainer = outgoingCallContainer;
+    window.fa.dom.shareContentContainer = shareContentContainer;
+    window.fa.dom.$msgContainer = $('.msg-container');
+    window.fa.dom.$overlay = $('#overlay');
+    window.fa.dom.chatThreadTemplate = Handlebars.compile(document.getElementById('chatThreadTemplate').innerHTML);
+    document.getElementById('chatThreadTemplate').parentNode.innerHTML = '';
+    window.fa.dom.callThreadTemplate = Handlebars.compile(document.getElementById('callThreadTemplate').innerHTML);
+    document.getElementById('callThreadTemplate').parentNode.innerHTML = '';
+    window.fa.dom.expertListTemplate = Handlebars.compile(document.getElementById('expertListTemplate').innerHTML);
+    document.getElementById('expertListTemplate').parentNode.innerHTML = '';
+  } else {
+    console.error("window.fa.dom is undefined.");
+  }
+
+  // incomingVideo.pause();
+  // incomingAudio.pause();
+  // homeContainer.querySelector('.welcome-msg').textContent = "Hola!! " + user.name + "...";
+
+  if (window.controllers.navbarController) {
+    window.controllers.navbarController(user);
+  }
+  setupIncomingCallScreen();
+  setupOutgoingCallScreen();
+  setupAnnotationCallFeature();
+  setupVideoCallFeature();
+  setupCallHeader();
+  setupBreakTimer();
+  setupChat(function () {
+    window.chat.init(window.fa.user.loginId  + '_chatID');//initialize the chat
+  });
+  goToHomeScreen(); // start the app in home screen
+} /*./expertHomeController */
+
+var addWebRTCSupport = function (userName, loginId, skills, audio, video, audioOut) {
+  // setOnlineAndTrackUsage(); // Setting userName as online for tracking attendance and usage // TODO
+  window.fa.firebaseConnection.initiateWebRTC(userName, audio, video, audioOut);
+  window.fa.firebaseConnection.setStatus(window.fa.user, 1);//make the user online
+  window.fa.firebaseConnection.webRTC.userType = "userMsg";
+};
+
+let setupIncomingCallScreen = function () {
+  let incomingCallContainer = document.querySelector('.incoming-call-container'),
+  callerTune = incomingCallContainer.querySelector('audio.incoming-caller-tune');
+  window.fa.dom.callerTune = callerTune;
+  incomingCallContainer.addEventListener('click', function (evt) {
+    evt.stopPropagation();
+    let $callControl = $(evt.target);
+    if (!$callControl.hasClass('call-control')) {
+      $callControl = $callControl.parents('.call-control');
+    }
+    if ($callControl.hasClass('accept-call')) {
+      window.callHistoryData.call_type = "Incoming Call";
+      callerTune.pause();
+      callerTune.currentTime = 0;
+      $('.main>.row').hide();
+      window.fa.firebaseConnection.webRTC.mute();
+      window.fa.firebaseConnection.webRTC.accept();
+    } else if ($callControl.hasClass('reject-call')) {
+      window.callHistoryData.call_type = "Rejected Call";
+      window.callHistoryData.call_duration = "0.00";
+      callerTune.pause();
+      callerTune.currentTime = 0;
+      let expMsg = "Rejectcall"
+      window.fa.firebaseConnection.webRTC.reject(expMsg);
+    } else if ($callControl.hasClass('speaker')) {
+      if (callerTune.paused) {
+        $callControl.find('.call-control-icon').removeClass('fa-volume-off').addClass('fa-volume-up');
+        $callControl.find('.call-control-text').text('Speaker On');
+        callerTune.play();
+      } else {
+        $callControl.find('.call-control-icon').removeClass('fa-volume-up').addClass('fa-volume-off');
+        $callControl.find('.call-control-text').text('Speaker Off');
+        callerTune.pause();
+      }
+    } else if ($callControl.hasClass('mic')) {
+      console.log('Incoming call Mic Toggle');
+    }
+  });
+}
+
+let setupOutgoingCallScreen = function () {
+  let outgoingCallContainer = document.querySelector('.outgoing-call-container');
+  // callerTune = outgoingCallContainer.querySelector('audio.incoming-caller-tune');
+  // window.fa.dom.callerTune = callerTune;
+  outgoingCallContainer.addEventListener('click', function (evt) {
+    evt.stopPropagation();
+    let $callControl = $(evt.target);
+    if (!$callControl.hasClass('call-control')) {
+      $callControl = $callControl.parents('.call-control');
+    }
+    if ($callControl.hasClass('end-call')) {
+      window.fa.call.state = "inactive";
+      goToHomeScreen();
+    } else if ($callControl.hasClass('speaker')) {
+      if (callerTune.paused) {
+        $callControl.find('.call-control-icon').removeClass('fa-volume-off').addClass('fa-volume-up');
+        $callControl.find('.call-control-text').text('Speaker On');
+        callerTune.play();
+      } else {
+        $callControl.find('.call-control-icon').removeClass('fa-volume-up').addClass('fa-volume-off');
+        $callControl.find('.call-control-text').text('Speaker Off');
+        callerTune.pause();
+      }
+    } else if ($callControl.hasClass('mic')) {
+      console.log('Incoming call Mic Toggle');
+    }
+  });
+}
+
+let initializeCallData = function () {
+  window.callHistoryData = {
+    "eng_id" : "",
+    "eng_name" : "",
+    "eng_partnerName" : "",
+    "eng_location" : "",
+    "call_type" : "",
+    "date" : "",
+    "call_startTime" : "",
+    "call_endTime" : "",
+    "call_duration" : ""
+  };
+
+  let timeNow = new Date();
+  let timeStamp = timeNow.getFullYear() + "-" + (timeNow.getMonth()+1) + "-" + timeNow.getDate() + " " + timeNow.getHours() + ":" + timeNow.getMinutes() + ":" + timeNow.getSeconds();
+  window.callEndobject = {
+    "enggId": "",
+    "expertId": window.fa.user.loginId,
+    "callStartDate":timeNow.getTime(),
+    "callEndDate": "",
+    "callDuration": ""
+  }
+  window.CallLogData = {
+    "timeStamp" : timeStamp,
+    "logLevel" : "Info",
+    "userActivity" : "Remote Call",
+    "activityStatus" : "",
+    "role" : "Expert",
+    "name": window.fa.user.expertName,
+    "loginId" : window.fa.user.loginId,
+    "programName": "",
+    "partnerName" : "",
+    "groupName" : window.fa.user.groupName,
+    "location": window.fa.user.location,
+    "tologinId" : "",
+    "toRole" : "Engineer",
+    "toName" : "",
+    "toProgramName" : "",
+    "toPartnerName": "",
+    "toLocation" : "",
+    "downloadedFileName" : "",
+    "osVersion"  : "",
+    "deviceModel"  : "Desktop",
+    "txferRole" : "",
+    "txferName" : "",
+    "txferLoginId" : "",
+    "txferProgramName" : "",
+    "txferPartnerName" : "",
+    "txferLocation" : "",
+    "gpsLocation" : "",
+    "connectionType" : "",
+    "signalStrength" : "",
+    "bandwidthValue" : "",
+    "callType" : "",
+    "terminationType" : "",
+    "callDuration" : "0.00",
+    "ticketNumber" : "",
+    "transactionId" : "",
+    "applicationId" : "HDFC",
+    "applicationDescription" : "HDFC pvt ltd",
+    "componentId" : "102",
+    "featureId" : "204",
+    "transactionStartDate" : timeStamp,
+    "transactionEndDate" : "",
+    "transactionState" : "Call Initiated",
+    "callFeedBack" : ""
+  };
+};
+
+let showOutgoingCallScreen = function (callerDetails) {
+  initializeCallData();
+  window.callerEng = callerDetails; // We already havde the caller info.
+  //getting data for Call logs
+  window.CallLogData.partnerName = window.callerEng.PartnerName;
+  window.CallLogData.tologinId = window.callerEng.EngId;
+  window.CallLogData.toName = window.callerEng.EngName;
+  window.CallLogData.toLocation = window.callerEng.PartnerLocation;
+  window.CallLogData.toPartnerName = window.callerEng.PartnerName;
+  window.CallLogData.ticketNumber = "";
+  window.callEndobject.enggId = callerEng.EngId;
+  window.callType = "Outgoing";
+  //getting data for call History
+  let date = new Date();
+  window.callHistoryData.eng_id = window.callerEng.EngId;
+  window.callHistoryData.eng_name = window.callerEng.EngName;
+  window.callHistoryData.eng_partnerName = window.callerEng.PartnerName;
+  window.callHistoryData.eng_location = window.callerEng.PartnerLocation;
+  window.callHistoryData.call_type = "Outgoing Call";
+  window.callHistoryData.date = date.toLocaleDateString();
+  window.callHistoryData.call_startTime = date.toLocaleTimeString();
+  window.callHistoryData.call_endTime = "";
+  window.callHistoryData.call_duration = "";
+  let outgoingCallContainer = window.fa.dom.outgoingCallContainer;
+  outgoingCallContainer.querySelector('.callee-name').textContent = window.callerEng.EngName + " (" + window.callerEng.EngId + ") \n" + "Partner : " + window.callerEng.PartnerName + "\n" + "Location : " + window.callerEng.PartnerLocation;
+  $('.main>.row').hide();
+  $(outgoingCallContainer).fadeIn();
+  disableUserOperations();
+};
+
+let showIncomingCallScreen = function () {
+  initializeCallData();
+  //getting data for Call logs
+  window.CallLogData.partnerName = window.callerEng.PartnerName;
+  window.CallLogData.toPartnerName = window.callerEng.PartnerName;
+  window.CallLogData.tologinId = window.callerEng.EngId;
+  window.CallLogData.toName = window.callerEng.EngName;
+  window.CallLogData.toLocation = window.callerEng.PartnerLocation;
+  window.CallLogData.ticketNumber = window.callerEng.ticketNumber;
+  window.CallLogData.callType = "Incoming Remote Call ( Call swtich count :0)";
+  window.CallLogData.transactionId = window.callerEng.transactionId;
+  window.callEndobject.enggId = window.callerEng.EngId;
+  window.callType = "Incoming"
+  //getting data for call History
+  let date = new Date();
+  window.callHistoryData.eng_id = window.callerEng.EngId;
+  window.callHistoryData.eng_name = window.callerEng.EngName;
+  window.callHistoryData.eng_partnerName = window.callerEng.PartnerName;
+  window.callHistoryData.eng_location = window.callerEng.PartnerLocation;
+  window.callHistoryData.call_type = "Missed Call";
+  window.callHistoryData.date = date.toLocaleDateString();
+  window.callHistoryData.call_startTime = date.toLocaleTimeString();
+  window.callHistoryData.call_endTime = "";
+  window.callHistoryData.call_duration = "";
+  let incomingCallContainer = window.fa.dom.incomingCallContainer;
+  // incomingCallContainer.querySelector('.caller-name').textContent = window.callerEng.EngName + "," + window.callerEng.EngId + ", Ticket No :" + window.callerEng.ticketNumber + ",\n" + window.callerEng.Address + "Partner : " + window.callerEng.PartnerName + "\n" + "Location : " + window.callerEng.PartnerLocation;
+  incomingCallContainer.querySelector('.caller-name').innerText  = "User Name : " + window.callerEng.EngName + "\r\n";
+  incomingCallContainer.querySelector('.caller-name').innerText  +=  "User ID : " + window.callerEng.EngId + "\r\n" ;
+incomingCallContainer.querySelector('.caller-name').innerText  += "Department : " + window.callerEng.PartnerName + "\r\n";
+incomingCallContainer.querySelector('.caller-name').innerText  += "Location : " + window.callerEng.PartnerLocation;
+  if (window.fa.call.type == "ANNOTATION") {
+    // incomingCallContainer.querySelector('.call-type').className = "glyphicon glyphicon-edit call-type";
+    incomingCallContainer.querySelector('.call-type').textContent = "annotation";
+  } else if (window.fa.call.type == "VIDEO") {
+    // incomingCallContainer.querySelector('.call-type').className = "glyphicon glyphicon-facetime-video call-type";
+    incomingCallContainer.querySelector('.call-type').textContent = "video";
+  }
+  window.fa.dom.callerTune.play();
+  $('.main>.row').hide();
+  if (!window.currentBrowserWindow.isFocused() || !window.currentBrowserWindow.isMaximized()) {
+    window.currentBrowserWindow.minimize();
+    window.currentBrowserWindow.show();
+    window.currentBrowserWindow.maximize();
+  }
+  $(incomingCallContainer).fadeIn();
+  disableUserOperations();
+};
+
+let showCallConnectingScreen = function () {
+  let callConnectingMsg = document.querySelector('.connecting-msg');
+  $('.main>.row').hide();
+  $(callConnectingMsg).fadeIn();
+};
+
+let goToHomeScreen = function () {
+  window.fa.dom.navbarBrand.click();//redirects to home screen
+  cleanUp();
+  setTimeout(function () {
+    addWebRTCSupport(window.fa.user.expertName, window.fa.user.loginId, window.fa.user.skills, true, false, window.fa.dom.incomingAudio); /*Audio: true, Video: false*/
+  }, 500);//cooling off period b/w new peer connections
+  enableUserOperations();
+}
+
+let cleanUp = function () {
+  cleanUpAnnotation();
+  window.fa.dom.callHeader.clear();
+  window.fa.dom.callerTune.pause();
+  window.fa.dom.callerTune.currentTime = 0;
+}
+let cleanUpAnnotation = function () {
+  window.fa.dom.annotationCanvas.clear();
+  window.fa.dom.annotationCanvas.parentNode.style.display = 'none';
+  window.fa.dom.annotationCanvas.loadingDiv.style.display = 'block';
+}
+let saveSnapsToLocal = function (imageData, done) {
+  if (window.fa.user.loginId && imageData) {
+    let fileName = (Date.now()) + '',
+    filePath = __dirname + path.sep + 'snaps' + path.sep + fileName + '.png';
+    fs.writeFile(filePath, imageData, 'base64', function (error, data) {
+      if (error) {
+        console.error(error);
+        popupAlert("File error!", "Failed to save snapshot.");
+      } else {
+        if (done && typeof done == 'function')
+        done(filePath);
+      }
+    });
+  }
+};
+let setupAnnotationCallFeature = function () {
+  let annotationCallContainer = document.querySelector('.annotation-call-container'),
+  // annotationsToolsToggleBtn = annotationCallContainer.querySelector('.annotation-tools-toggle-btn'),
+  callControls = annotationCallContainer.querySelector('.call-controls'),
+  annotationTools = annotationCallContainer.querySelector('.annotation-tools'),
+  annotationImage = annotationCallContainer.querySelector('.annotation-image img'),
+  annotationCanvas = annotationCallContainer.querySelector('#annotationCanvas'),
+  canvasContext = annotationCanvas.getContext('2d'),
+  loadingDiv = annotationCallContainer.querySelector('.loading-div'),
+  zoomBtns = annotationCallContainer.querySelector('.zoom-btns');
+
+  callControls.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    let $callControl = $(evt.target);
+    if (!$callControl.hasClass('call-control')) {
+      $callControl = $callControl.parents('.call-control');
+    }
+    if ($callControl.hasClass('end-call')) {
+      callTimer.stop();
+      let expMsg = "Endcall"
+      window.fa.firebaseConnection.webRTC.reject(expMsg);
+    } else if ($callControl.hasClass('hold-call')) {
+      console.log('Hold Call');
+    } else if ($callControl.hasClass('speaker')) {
+      if (incomingAudio.muted) {
+        $callControl.find('.call-control-icon').removeClass('fa-volume-off').addClass('fa-volume-up');
+        $callControl.find('.call-control-text').text('Speaker On');
+        incomingAudio.muted = false;
+      } else {
+        $callControl.find('.call-control-icon').removeClass('fa-volume-up').addClass('fa-volume-off');
+        $callControl.find('.call-control-text').text('Speaker Off');
+        incomingAudio.muted = true;
+      }
+    } else if ($callControl.hasClass('mic')) {
+      let $callControlIcon = $callControl.find('.call-control-icon');
+      if ($callControlIcon.hasClass('fa-microphone-slash')) {
+        $callControlIcon.removeClass('fa-microphone-slash').addClass('fa-microphone');
+        $callControl.find('.call-control-text').text('Mic On');
+        window.fa.firebaseConnection.webRTC.unmute();
+      } else {
+        $callControlIcon.removeClass('fa-microphone').addClass('fa-microphone-slash');
+        $callControl.find('.call-control-text').text('Mic Off');
+        window.fa.firebaseConnection.webRTC.mute();
+      }
+    } else if ($callControl.hasClass('video')) {
+      switchToVideoCall();
+      window.fa.dom.tabVideoCall.click();
+      enableVideoTools();
+    }
+  });
+
+  // annotationsToolsToggleBtn.addEventListener('click', function (evt) {
+  //   if (annotationTools.className.includes('open')) {
+  //     annotationTools.className = annotationTools.className.replace(/ *open/,'');
+  //   } else {
+  //     annotationTools.className += ' open';
+  //   }
+  // });
+
+  annotationTools.addEventListener('click', function (evt) {
+    if (evt.target.className.includes('fa-camera')) {
+      let imageData = annotationCanvas.toDataURL("image/png");
+      saveSnapsToLocal(imageData.replace(/^data:image\/png;base64,/, ""), function (filePath) {
+        if (filePath) {
+          console.log('Snap saved @',filePath);
+          popupAlert("Snap saved", '@ '+ filePath);
+        }
+      });
+    } else if (evt.target.className.includes('fa-paint-brush')) {
+      if (evt.target.className.includes('selected')) {
+        evt.target.classList.remove('selected');
+        annotationCanvas.style.cursor = 'default';
+        annotationCanvas.isFreeFlowSelected = false;
+        evt.target.title = "Select free flow";
+        annotationCanvas.title="Point annotation active";
+      } else {
+        evt.target.classList.add('selected');
+        annotationCanvas.style.cursor = 'pointer';
+        annotationCanvas.isFreeFlowSelected = true;
+        evt.target.title = "Deselect free flow";
+        annotationCanvas.title="Free flow annotation active";
+      }
+    }
+  });
+
+
+  annotationCanvas.clear = function() {
+    canvasContext.setTransform(1, 0, 0, 1, 0, 0);
+    canvasContext.clearRect(0, 0, annotationCanvas.width, annotationCanvas.height);
+  }
+  annotationCanvas.reset = function() {
+    canvasContext.drawImage(annotationImage,0,0);
+  }
+  annotationCanvas.freeDraw = function (ctx, x, y, isDown) {
+    if (isDown) {
+      ctx.beginPath();
+      ctx.moveTo(ctx.lastX, ctx.lastY);
+      ctx.lineTo(x, y);
+      ctx.closePath();
+      ctx.strokeStyle = "lime";
+      ctx.stroke();
+    }
+    ctx.lastX = x; ctx.lastY = y;
+  }
+  canvasContext.lastX = undefined;
+  canvasContext.lastY = undefined;
+  annotationCanvas.loadingDiv = loadingDiv;
+  annotationCanvas.mousePressed = false;
+  annotationCanvas.freeFlowArray = [];
+  annotationCanvas.isFreeFlowSelected = false;
+  annotationCanvas.title="Point annotation active";
+  annotationCanvas.addEventListener('mousedown', function (evt) {
+    annotationCanvas.reset();
+    annotationCanvas.mousePressed = true;
+    annotationCanvas.freeFlowArray = [];
+    annotationCanvas.freeDraw(canvasContext, evt.offsetX, evt.offsetY, false);
+  });
+  annotationCanvas.addEventListener('mouseup', function (evt) {
+    if (annotationCanvas.freeFlowArray.length)
+    window.fa.firebaseConnection.webRTC.sendFreeFlowCoods({"ARRAY":annotationCanvas.freeFlowArray});
+    annotationCanvas.mousePressed = false;
+  });
+  annotationCanvas.addEventListener('mouseleave', function (evt) {
+    annotationCanvas.mousePressed = false;
+  });
+
+  annotationCanvas.addEventListener('mousemove', function (evt) {
+    if ( annotationCanvas.mousePressed && annotationCanvas.isFreeFlowSelected) {
+      annotationCanvas.freeDraw(canvasContext, evt.offsetX, evt.offsetY, true);
+      annotationCanvas.freeFlowArray.push({
+        "X": evt.offsetX,
+        "Y": evt.offsetY
+      });
+    }
+  });
+  annotationCanvas.addEventListener('click', function (evt) {
+    if (!annotationCanvas.isFreeFlowSelected) {
+      canvasContext.beginPath();
+      canvasContext.arc(evt.offsetX,evt.offsetY,6,0,2*Math.PI);
+      canvasContext.lineWidth = 2;
+      canvasContext.strokeStyle = "lime";
+      canvasContext.stroke();
+
+      let coordinates = {};
+      switch (annotationCanvas.currentZoom) {
+        case -2:
+        coordinates.x = evt.offsetX * 4;
+        coordinates.y = evt.offsetY * 4;
+        break;
+        case -1:
+        coordinates.x = evt.offsetX * 2;
+        coordinates.y = evt.offsetY * 2;
+        break;
+        case 0:
+        coordinates.x = evt.offsetX;
+        coordinates.y = evt.offsetY;
+        break;
+        case 1:
+        coordinates.x = evt.offsetX / 2;
+        coordinates.y = evt.offsetY / 2;
+        break;
+        case 2:
+        coordinates.x = evt.offsetX / 4;
+        coordinates.y = evt.offsetY / 4;
+        break;
+      }
+      coordinates.x = Math.floor(coordinates.x);
+      coordinates.y = Math.floor(coordinates.y);
+      window.fa.firebaseConnection.webRTC.send(coordinates);
+    }
+  });
+
+
+  zoomBtns.addEventListener('click', function (evt) {
+    let curZoom = annotationCanvas.currentZoom;
+    if (evt.target.className.includes('plus') && curZoom < 2 ) {
+      annotationCanvas.currentZoom = curZoom + 1;
+    } else if (evt.target.className.includes('minus') && curZoom > -2) {
+      annotationCanvas.currentZoom = curZoom - 1;
+    }
+    annotationCanvas.zoomImage();
+  });
+
+  annotationCanvas.zoomImage = function () {
+    switch (annotationCanvas.currentZoom) {
+      case -2:
+      annotationCanvas.style.width = annotationCanvas.originalWidth / 4 + 'px';
+      break;
+      case -1:
+      annotationCanvas.style.width = annotationCanvas.originalWidth / 2 + 'px';
+      break;
+      case 0:
+      annotationCanvas.style.width = annotationCanvas.originalWidth + 'px';
+      break;
+      case 1:
+      annotationCanvas.style.width = annotationCanvas.originalWidth*2 + 'px';
+      break;
+      case 2:
+      annotationCanvas.style.width = annotationCanvas.originalWidth*4 + 'px';
+      break;
+    }
+  }
+}
+
+let enableAnnotationTools = function () {
+  let $annotationTools = $('.annotation-tools');
+  $annotationTools.find('.tool.fa-camera').removeClass('disabled');
+  $annotationTools.find('.tool.fa-paint-brush').removeClass('disabled');
+}
+let disableAnnotationTools = function () {
+  let $annotationTools = $('.annotation-tools');
+  $annotationTools.find('.tool').addClass('disabled');
+}
+let enableVideoTools = function () {
+  let $videoTools = $('.video-tools');
+  $videoTools.find('.tool.fa-camera').removeClass('disabled');
+}
+let disableVideoTools = function () {
+  let $videoTools = $('.video-tools');
+  $videoTools.find('.tool').addClass('disabled');
+}
+let setupVideoCallFeature = function () {
+  let videoCallContainer = document.querySelector('.video-call-container'),
+  callControls = videoCallContainer.querySelector('.call-controls'),
+  // zoomControl = videoCallContainer.querySelector('.zoom-control'),
+  videoTools = videoCallContainer.querySelector('.video-tools'),
+  loadingDiv = videoCallContainer.querySelector('.loading-div'),
+  incomingVideo = videoCallContainer.querySelector('#incomingVideo');
+
+  disableVideoTools();
+  incomingVideo.loadingDiv = loadingDiv;
+  incomingVideo.onclick = function () {
+   
+  document.getElementById('incomingVideo').focus();
+  }
+
+  incomingVideo.addEventListener('mouseup', mouseupListener);
+  incomingVideo.addEventListener('keydown',keydownListener);
+  function mouseupListener (e) {
+      var data = getMouseData(e)
+      data.click = true
+      console.log('send mouseup', data)
+      window.fa.firebaseConnection.webRTC.sendMessage(JSON.stringify(data));
+      //peer.send(data)
+    }
+
+  function videoDimensions(video) {
+  	var videoRatio = video.videoWidth / video.videoHeight;
+  	var width = video.offsetWidth, height = video.offsetHeight;
+  	var elementRatio = width/height;
+  	if(elementRatio > videoRatio) width = height * videoRatio;
+  	else height = width / videoRatio;
+  	return {
+    	width: width,
+    	height: height
+  	};
+	}
+
+
+  function getMouseData (e) {
+      var data = {}
+      data.clientX = e.clientX
+      data.clientY = e.clientY
+      
+      var video;
+      if (!video) video = document.querySelector('#incomingVideo')
+      if (video) {
+        videoSize = video.getBoundingClientRect()
+        var videoRatio = video.videoWidth / video.videoHeight;
+        var width = video.offsetWidth, height = video.offsetHeight;
+        var elementRatio = width/height;
+        if(elementRatio > videoRatio) width = height * videoRatio;
+        else height = width / videoRatio; 
+        data.canvasWidth = width
+        data.canvasHeight = height
+      }
+
+      return data
+    }
+  function keydownListener (e) {
+      e.preventDefault()
+      console.log('send keydown')
+      var data = {
+        keyCode: e.keyCode,
+        shift: e.shiftKey,
+        meta: e.metaKey,
+        control: e.ctrlKey,
+        alt: e.altKey
+      }
+
+      console.log('send key', data)
+      window.fa.firebaseConnection.webRTC.sendMessage(JSON.stringify(data));
+}
+  videoTools.addEventListener('click', function (evt) {
+    if (evt.target.className.includes('fa-camera')) {
+      let canvas = document.createElement("canvas");
+      canvas.height = incomingVideo.videoHeight;
+      canvas.width = incomingVideo.videoWidth;
+      let context = canvas.getContext("2d");
+      context.drawImage(incomingVideo , 0, 0);
+      let imageData = canvas.toDataURL("image/png");
+      saveSnapsToLocal(imageData.replace(/^data:image\/png;base64,/, ""), function (filePath) {
+        if (filePath) {
+          popupAlert("Snap saved", '@ '+ filePath);
+        }
+      });
+    }
+  });
+  callControls.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    let $callControl = $(evt.target);
+    if (!$callControl.hasClass('call-control')) {
+      $callControl = $callControl.parents('.call-control');
+    }
+    if ($callControl.hasClass('end-call')) {
+      let expMsg = "Endcall"
+      window.fa.firebaseConnection.webRTC.reject(expMsg);
+    } else if ($callControl.hasClass('hold-call')) {
+      console.log('Hold Call');
+    } else if ($callControl.hasClass('speaker')) {
+      if (incomingAudio.muted) {
+        $callControl.find('.call-control-icon').removeClass('fa-volume-off').addClass('fa-volume-up');
+        $callControl.find('.call-control-text').text('Speaker On');
+        incomingAudio.muted = false;
+      } else {
+        $callControl.find('.call-control-icon').removeClass('fa-volume-up').addClass('fa-volume-off');
+        $callControl.find('.call-control-text').text('Speaker Off');
+        incomingAudio.muted = true;
+      }
+    } else if ($callControl.hasClass('mic')) {
+      let $callControlIcon = $callControl.find('.call-control-icon');
+      if ($callControlIcon.hasClass('fa-microphone-slash')) {
+        $callControlIcon.removeClass('fa-microphone-slash').addClass('fa-microphone');
+        $callControl.find('.call-control-text').text('Mic On');
+        window.fa.firebaseConnection.webRTC.unmute();
+      } else {
+        $callControlIcon.removeClass('fa-microphone').addClass('fa-microphone-slash');
+        $callControl.find('.call-control-text').text('Mic Off');
+        window.fa.firebaseConnection.webRTC.mute();
+      }
+    } else if ($callControl.hasClass('annotation')) {
+      switchToAnnotationCall();
+      cleanUpAnnotation();
+      window.fa.dom.tabAnnotationCall.click();
+    }
+  });
+}
+
+let setupCallHeader = function () {
+  let callHeader = document.querySelector('.main .call-header'),
+  callActivityIcon = callHeader.querySelector('img'),
+  callTimer = callHeader.querySelector('#callTimer'),
+  callerName = callHeader.querySelector('.caller-name'),
+  hrs = callTimer.querySelector('.hrs'),
+  mins = callTimer.querySelector('.mins'),
+  secs = callTimer.querySelector('.secs');
+
+  window.fa.dom.callHeader = callHeader;
+
+  let rotateActiveCallIcon = function () {
+    if (callActivityIcon.src) {
+      let i = parseInt(callActivityIcon.src.match(/\d/));
+      if (i==3) {
+        callActivityIcon.src = 'public/img/active-call-0.png';
+      } else {
+        callActivityIcon.src = 'public/img/active-call-' + (++i) + '.png';
+      }
+    } else {
+      callActivityIcon.src = 'public/img/active-call-0.png';
+    }
+  }
+  callHeader.clear = function () {
+    hrs.textContent = '';
+    mins.textContent = '';
+    secs.textContent = '';
+    callerName.textContent = 'Annotaion or Video Call';
+  };
+  callTimer.start = function () {
+    callTimer.isRunning = true;
+    hrs.textContent = '00';
+    mins.textContent = '00';
+    secs.textContent = '00';
+    callTimer.timerInterval = setInterval(function () {
+      rotateActiveCallIcon();
+      setTimeout(function () {
+        rotateActiveCallIcon();
+      }, 333);
+      setTimeout(function () {
+        rotateActiveCallIcon();
+      }, 666);
+      let s = parseInt(secs.textContent) + 1;
+      let m = parseInt(mins.textContent);
+      let h = parseInt(hrs.textContent);
+      if (s == 60) {
+        s = 0;
+        m = ++m;
+        if (m == 60) {
+          m = 0;
+          h = ++h;
+          hrs.textContent = h<10 ? '0' + h: h;
+        }
+        mins.textContent = m<10 ? '0' + m: m;
+      }
+      secs.textContent = s<10 ? '0' + s: s;
+    }, 1000);
+  };
+  callTimer.stop = function () {
+    callTimer.isRunning = false;
+    if (callTimer.timerInterval) {
+      clearInterval(callTimer.timerInterval);
+    }
+  }
+}
+
+let setupBreakTimer = function () {
+  let breakTimer = document.getElementById('breakTimer'),
+  hrs = breakTimer.querySelector('.hrs'),
+  mins = breakTimer.querySelector('.mins'),
+  secs = breakTimer.querySelector('.secs');
+
+  window.fa.dom.breakTimer = breakTimer;
+  breakTimer.clear = function () {
+    hrs.textContent = '00';
+    mins.textContent = '00';
+    secs.textContent = '00';
+  };
+  breakTimer.start = function () {
+    breakTimer.isRunning = true;
+    hrs.textContent = '00';
+    mins.textContent = '00';
+    secs.textContent = '00';
+    breakTimer.timerInterval = setInterval(function () {
+      let s = parseInt(secs.textContent) + 1;
+      let m = parseInt(mins.textContent);
+      let h = parseInt(hrs.textContent);
+      if (s == 60) {
+        s = 0;
+        m = ++m;
+        if (m == 60) {
+          m = 0;
+          h = ++h;
+          hrs.textContent = h<10 ? '0' + h: h;
+        }
+        mins.textContent = m<10 ? '0' + m: m;
+      }
+      secs.textContent = s<10 ? '0' + s: s;
+    }, 1000);
+  };
+  breakTimer.stop = function () {
+    if (breakTimer.isRunning) {
+      window.fa.firebaseConnection.endBreak();
+      console.log("Break Ended");
+    }
+    breakTimer.isRunning = false;
+    if (breakTimer.timerInterval) {
+      clearInterval(breakTimer.timerInterval);
+    }
+  }
+}
+
+let showNotification = function (msg, type, time) {
+  let duration = time | 3000;
+  window.fa.dom.$msgContainer.find('.msg').text(msg);
+  switch (type.toUpperCase()) {
+    case "SUCCESS":
+    window.fa.dom.$msgContainer.removeClass('error warning info').addClass('success').css('right','0px');
+    setTimeout(function () {
+      window.fa.dom.$msgContainer.css('right', '-100%').find('.msg').text('');
+    }, duration );
+    break;
+    case "ERROR":
+    window.fa.dom.$msgContainer.removeClass('success warning info').addClass('error').css('right','0px');
+    setTimeout(function () {
+      window.fa.dom.$msgContainer.css('right', '-100%').find('.msg').text('');
+    }, duration);
+    break;
+    case "WARNING":
+    window.fa.dom.$msgContainer.removeClass('error success info').addClass('warning').css('right','0px');
+    setTimeout(function () {
+      window.fa.dom.$msgContainer.css('right', '-100%').find('.msg').text('');
+    }, duration);
+    break;
+    case "INFO":
+    window.fa.dom.$msgContainer.removeClass('error success warning').addClass('info').css('right','0px');
+    setTimeout(function () {
+      window.fa.dom.$msgContainer.css('right', '-100%').find('.msg').text('');
+    }, duration);
+    break;
+  }
+}
+
+let showAnnotationScreen = function (caller) { // Switching between annotation and video call is currently disabled.
+  disableAnnotationTools();
+  let annotationCallContainer = document.querySelector('.annotation-call-container');
+  if (caller && caller.name) {
+    window.fa.dom.callHeader.querySelector('.caller-name').textContent = window.callerEng.EngName;
+    window.fa.dom.callHeader.querySelector('#callTimer').style.display = 'initial';
+  } else {
+    window.fa.dom.callHeader.querySelector('.caller-name').textContent = 'Annotation or Video Call';
+  }
+  window.fa.dom.callHeader.style.display = 'block';
+  if (!window.fa.dom.callHeader.querySelector('#callTimer').isRunning)
+  window.fa.dom.callHeader.querySelector('#callTimer').start();
+  window.fa.dom.tabAnnotationCall.click();
+};
+
+let showVideoScreen = function (caller) { // Switching between annotation and video call is currently disabled.
+  let videoCallContainer = document.querySelector('.video-call-container');
+  if (caller && caller.name) {
+    window.fa.dom.callHeader.querySelector('.caller-name').textContent = window.callerEng.EngName + "," + window.callerEng.EngId + ", Ticket No :" + window.callerEng.ticketNumber;
+  } else {
+    window.fa.dom.callHeader.querySelector('.caller-name').textContent = 'Annotation or Video Call';
+  }
+  window.fa.dom.callHeader.style.display = 'block';
+  if (!window.fa.dom.callHeader.querySelector('#callTimer').isRunning)
+  window.fa.dom.callHeader.querySelector('#callTimer').start();
+  window.fa.dom.tabVideoCall.click();
+  enableVideoTools();
+};
+
+let disableUserOperations = function () {
+  let userOperations = document.querySelector('.user-operations');
+  $(userOperations).addClass('disabled');
+}
+
+let enableUserOperations = function () {
+  let userOperations = document.querySelector('.user-operations');
+  $(userOperations).removeClass('disabled');
+}
+let switchToVideoCall = function () {
+  window.switchCount++;
+  window.fa.firebaseConnection.webRTC.sendMessage("EnableVideo");
+  window.fa.videoEnabled = true;
+  window.fa.webRTCVideo = new webRTCVideo(true, false);
+  window.fa.webRTCVideo.startConnection(window.fa.dom.incomingVideo);
+}
+
+let switchToAnnotationCall = function () {
+  window.switchCount++;
+  window.fa.firebaseConnection.webRTC.sendMessage("DisableVideo");
+  window.fa.webRTCVideo.reject();
+}

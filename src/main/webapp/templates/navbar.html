@@ -1,0 +1,44 @@
+<nav class="navbar navbar-fixed-top navbar-inverse" >
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#appNavCollapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+      <a class="navbar-brand" ui-sref="home">IMAGINE</a>
+
+      <!-- <span class="navbar-brand" ng-click="goToState('home');"></span> -->
+    </div>
+    <div class="collapse navbar-collapse padding-none" id="appNavCollapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a><span>{{user.engineerName || 'User'}}</span> &nbsp;<span class="glyphicon glyphicon-user"></span></a></li>
+        <li><a ng-click="logout();" title="Logout"><span class="glyphicon glyphicon-log-out"></span></a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right" ng-show="showNavbarIcons" style="margin-left:100px;">
+        <li ng-click="goToState('messages');" title="Messages"><a><span class="glyphicon glyphicon-envelope"></span></a></li>
+        <li ng-click="goToState('messages');" title="Remote Help"><a><span class="fa fa-phone"></span></a></li>
+        <li ng-click="goToState('v-sme');" title="Virtual SME"><a><span class="fa fa-user-secret"></span></a></li>
+        <li ng-click="goToState('library');" title="Ref Library"><a><span class="glyphicon glyphicon-book"></span></a></li>
+        <!-- <li ng-click="goToState('ar-player');" title="AR Player"><a><span class="glyphicon glyphicon-film"></span></a></li> -->
+        <li ng-click="goToState('share-sop');" title="Upload SOP"><a><span class="fa fa-upload"></span></a></li>
+
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+<script type="text/ng-template" id="logoutPopUP.html">
+  <div class="modal-content"  style="background-color:black;border-radius:0px;color:#ddd;">
+    <div class="modal-header">
+      <h3 class="modal-title">Multi-device Login</h3>
+    </div>
+    <div class="modal-body">
+      <h5>You have been logged out of this device as you are logged in on a different device.</h5>
+    </div>
+    <div class="modal-footer">
+      <button type="button" ng-click="forceLogout()" class="btn btn-md btn-info">OK</button>
+    </div>
+  </div>
+</script>

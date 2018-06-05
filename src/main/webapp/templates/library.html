@@ -1,0 +1,99 @@
+<div class="container-fluid full-height library-container" style="padding-top:41px;">
+  <div class="row full-height">
+    <div class="col-xs-12 full-height" style="padding-top:10px;">
+      <div class="container">
+        <div class="row indexes">
+          <div class="col-xs-3">
+            <select class="form-control no-select type" ng-change="selectSearchChange('type');" ng-model="selectedType" ng-options="x.name for x in deviceTypes"></select>
+          </div>
+          <div class="col-xs-3">
+            <select class="form-control no-select brand" ng-change="selectSearchChange('brand');" ng-model="selectedBrand" ng-options="x.name for x in deviceBrands"></select>
+          </div>
+          <div class="col-xs-3">
+            <select class="form-control no-select model" ng-change="selectSearchChange('model');" ng-model="selectedModel" ng-options="x.name for x in deviceModels"></select>
+          </div>
+          <div class="col-xs-3">
+            <button ng-click="performSearchByIndex();" class="btn btn-info btn-block" type="button">Search Resources</button>
+          </div>
+        </div>
+        <div class="row text-center" style="color:#eee;padding-left:10px;">
+          OR
+        </div>
+        <div class="row indexes">
+          <div class="col-xs-9" >
+            <input ng-model="resourceDesc" type="text" class="form-control" placeholder="Enter resource name or description">
+          </div>
+          <div class="col-xs-3">
+            <button ng-click="performSearchByQuery();" class="btn btn-info btn-block" type="button">Search Resources</button>
+          </div>
+        </div>
+        <div class="row results-row indexes" style="display:none;">
+          <div class="col-xs-12 full-height" style="padding-top:10px;">
+            <div class="panel panel-primary">
+              <div class="panel-heading pos-rel">
+                Available Resources
+              </div>
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th style="width:40%;" data-orderby="name" ng-click="setTableOrderBy($event);" title="Order by file name">Name <span class="caret"></span></th>
+                      <th>Size</th>
+                      <th data-orderby="type" ng-click="setTableOrderBy($event);" title="Order by file type">Type <span class="caret"></span></th>
+                      <th data-orderby="updated" ng-click="setTableOrderBy($event);" title="Order by last modified">Last Modified <span class="caret"></span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="file in resources | orderBy:orderRowsBy" data-rowid="{{file.name}}">
+                      <td ng-bind="file.name"></td>
+                      <td ng-bind="file.size | sizeText"></td>
+                      <td ng-bind="file.type"></td>
+                      <td>
+                        {{file.updated | date:'MMM dd, yyyy'}}
+                        <span class="downloadAndViewIcon">
+                          <span class="glyphicon glyphicon-eye-open primary" style="padding-right:10px;cursor:pointer;" ng-click="openViewWindow(file.name)" title="View file"></span>
+                          <a href="{{file.downloadURLs[0]}}" download ng-click="sendDownloadFileLogs(file.name)" title="Download file"><span class="glyphicon glyphicon-download"></span></a>
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <script type="text/ng-template" id="viewFile.html">
+              <div class="modal-content"  style="background-color:black;border-radius:0px;color:#ddd;">
+                <div class="modal-header">
+                  <button type="button" class="close" ng-click="cancel()">&times;</button>
+                  <h4 class="modal-title">{{items.name}}</h4>
+                </div>
+                <div class="modal-body">
+                  <div ng-if="items.contentType == 'mp4'">
+                    <video width="550" controls>
+                      <source src="{{items.downloadURLs[0]}}" type="video/mp4">
+                      </video>
+                    </div>
+                    <div ng-if="items.contentType == 'xlsx' || items.contentType == 'docx' || items.contentType == 'ppt' || items.contentType == 'xls' || items.contentType == 'doc'">
+                      <h5>Please download the file to view</h5>
+                    </div>
+                    <div ng-if="items.contentType == 'image/jpeg' || items.contentType == 'image/png'" style="align-items:center;">
+                      <img ng-src="{{items.downloadURLs[0]}}" style="margin:0% 5% 5% 5%;" height="100%" width="90%">
+                    </div>
+                    <div ng-if="items.contentType == 'application/pdf' || items.contentType == 'text/plain'">
+                      <object type="application/pdf" height="370px" width="100%" data="{{items.downloadURLs[0]}}" ></object>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+                  </div>
+                </div>
+              </script>
+            </div>
+          </div>
+          <div class="alert alert-danger" role="alert" style="display:none;">
+            <button ng-click="hideSearchMsg();"type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <span class="msg">Something went wrong!</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

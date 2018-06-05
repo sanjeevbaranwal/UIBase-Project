@@ -1,0 +1,37 @@
+<div class="container-fluid full-height vsme-container" style="padding-top:41px;">
+  <div class="row full-height">
+    <div class="col-xs-9 full-height img-container padding-none " style="display:flex;overflow:auto">
+      <iframe height='400' width='400' name='ref_img' frameborder=0 style="display:none;position:relative;top:50%;transform:translate(0,-50%);margin:auto">
+      </iframe>
+      <img ng-src="{{refImgUrl}}" style="height:auto;width:auto;margin:auto">
+    </div>
+    <div class="col-xs-3 full-height padding-none" style="background-color:#555555;">
+      <div style="position:relative;background-color:white;height:calc(100% - 30px)">
+        <div class="chat-container">
+          <div class="header" style="padding:5px;background-color:#595959;border-right:1px solid black;">
+            <div class="">
+              <div style="height: 15px;width:15px;float:left;background-color:lightgreen;border-radius:50%;margin:2px">
+              </div>
+              <span class="chat-contact-name">
+                Virtual Expert
+              </span>
+            </div>
+          </div>
+          <div class="chat-box">
+            <ul class="chat">
+              <li class="msg other">
+                Hi <span style="color:#0099ff;">{{user.engineerName}}!</span> What can I help you with?
+              </li>
+            </ul>
+          </div>
+          <div class="input-group">
+            <input ng-model="ownMsg" type="text" id = "fName" ng-keydown="$event.which === 13 && sendMsg(ownMsg);" class="form-control" placeholder="Enter msg..." ng-change = "checkForEmpty(ownMsg)">
+            <span class="input-group-btn">
+              <button ng-click="sendMsg(ownMsg);" ng-disabled="!ownMsg" type="reset" class="btn btn-info" type="button"><i class="fa fa-paper-plane"></i></button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

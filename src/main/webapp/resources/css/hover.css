@@ -1,0 +1,69 @@
+#minimizeButton:hover, #remoteSMEMinimizeButton:hover
+{
+    background-image: url('../images/Minimize-Hover.png');
+}
+
+#minimizeButton:active, #remoteSMEMinimizeButton:active
+{
+    background-image: url('../images/Minimize-Pressed.png');
+}
+
+#closeButton:hover, #remoteSMECloseButton:hover
+{
+    background-image: url('../images/Close-Hover.png');
+}
+
+#closeButton:active, #remoteSMECloseButton:active
+{
+    background-image: url('../images/Close-Pressed.png');
+}
+
+#sendUserTextBtn:hover
+{
+    background-image: url('../images/Send-Hover.png');
+}
+
+#sendUserTextBtn:active
+{
+    background-image: url('../images/Send-Pressed.png');
+}
+
+#dropDownMenuImg:hover
+{
+    background-image: url('../images/Menu-Hover.png');
+}
+
+#dropDownMenuImg:active
+{
+    background-image: url('../images/Menu-Pressed.png');
+}
+
+#minimizeRemoteSMEButton:hover
+{
+    background-image: url('../images/AvatarMinimize-Hover.png');
+}
+
+#minimizeRemoteSMEButton:active
+{
+    background-image: url('../images/AvatarMinimize-Pressed.png');
+}
+
+#maximizeRemoteSMEButton:hover
+{
+    background-image: url('../images/AvatarMaximize-Hover.png');
+}
+
+#maximizeRemoteSMEButton:active
+{
+    background-image: url('../images/AvatarMaximize-Pressed.png');
+}
+
+#callExpertBtn:hover
+{
+    background-image: url('../images/CallExpert-Hover.png');
+}
+
+#callExpertBtn:active
+{
+    background-image: url('../images/CallExpert-Pressed.png');
+}

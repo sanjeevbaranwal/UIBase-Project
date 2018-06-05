@@ -1,0 +1,180 @@
+<div class="container-fluid full-height messages-container" >
+  <div class="row full-height">
+    <div class="col-xs-12 full-height call-container padding-none" ng-controller="CallController">
+      <div class="text-center call-header" class style="padding:5px;background-color:#595959;border-right:1px solid black;">
+        <span class="call-type">Video and Annotation Call</span>
+        <span class="caller-callee-name"></span>
+        <span class="call-duration"></span>
+      </div>
+      <div class="center-pane container-fluid">
+        <div class="div-call-timer" style="display:none">
+          <div class="col-xs-3 col-xs-offset-9">
+            <span> 00:00</span>
+          </div>
+        </div>
+        <div class="row text-center display-flex outgoing-call-container flex-dir-col" ng-show="showCallConatiner.outgoing">
+          <div class="col-xs-12 display-flex flex-dir-col outgoing-screen-container padding-none">
+            <div class="margin-auto" style="color:#eee;">
+              <img src="static/img/avatar.png" alt="Caller Pic" style="width:200px;"/>
+              <div class="call-status-div">
+                <h3 ng-bind="callStatusText" style="">Dialing... </h3>
+              </div>
+              <span class="callee-name" style="font-size:30px;margin-top:20px;">{{expert.name}}</span>
+            </div>
+          </div>
+          <div class="call-controls col-xs-12" >
+            <div class="row call-controls-container">
+              <div ng-click="muteUnmute()" class="col-xs-4 call-control mic padding-none no-select">
+                <span class="call-control-text">{{micText}}</span>
+                <span class="fa fa-microphone call-control-icon" aria-hidden="true"></span>
+              </div>
+              <div ng-click="speaker()" class="col-xs-4 call-control speaker padding-none no-select">
+                <span class="call-control-text">{{speakerText}}</span>
+                <span class="fa fa-volume-up call-control-icon" aria-hidden="true"></span>
+              </div>
+              <div ng-click="endCall()" class="col-xs-4 call-control end-call padding-none no-select">
+                <span class="call-control-text">End Call</span>
+                <span class="fa fa-phone call-control-icon" aria-hidden="true"></span>
+              </div>
+              <!-- <div class="col-xs-3 call-control switch-to-annotation-call padding-none no-select " style="background-color:{{}}">
+                <span class="call-control-text" >{{callType}}</span>
+                <span class="fa {{callIcon}} call-control-icon" aria-hidden="true"></span>
+              </div> -->
+            </div>
+          </div><!-- /.call-controls -->
+        </div>
+        <div class="row text-center display-flex incoming-call-container flex-dir-col" ng-show="showCallConatiner.incoming">
+          <div class="col-xs-12 display-flex flex-dir-col incoming-screen-container padding-none">
+            <div class="margin-auto" style="color:#eee;">
+              <div class="margin-auto" style="display:;">
+                <audio  id="ringtone" ng-src="{{ringtone}}" autoplay='true'></audio>
+              </div>
+              <img src="static/img/avatar.png" alt="Caller Pic" style="width:200px;" />
+              <div class="">
+                <h3 ng-bind="incomingCallStatusText" style="">Incoming Call...</h3>
+              </div>
+              <span class="caller-name" style="font-size:30px;margin-top:20px;">{{callerDetails.name}}</span>
+            </div>
+          </div>
+          <div class="call-controls col-xs-12" >
+            <div class="row call-controls-container">
+              <div ng-click="muteUnmute()" class="col-xs-4 call-control mic padding-none no-select">
+                <span class="call-control-text">{{micText}}</span>
+                <span class="fa fa-microphone call-control-icon" aria-hidden="true"></span>
+              </div>
+              <div ng-click="speaker()" class="col-xs-4 call-control speaker padding-none no-select">
+                <span class="call-control-text">{{speakerText}}</span>
+                <span class="fa fa-volume-up call-control-icon" aria-hidden="true"></span>
+              </div>
+              <div ng-click="acceptCall()" class="col-xs-4 call-control accept-call padding-none no-select">
+                <span class="call-control-text">Accept Call</span>
+                <span class="fa fa-phone call-control-icon" aria-hidden="true"></span>
+              </div>
+              <!-- <div class="col-xs-3 call-control switch-to-annotation-call padding-none no-select " style="background-color:{{}}">
+                <span class="call-control-text" >{{callType}}</span>
+                <span class="fa {{callIcon}} call-control-icon" aria-hidden="true"></span>
+              </div> -->
+            </div>
+          </div><!-- /.call-controls -->
+        </div>
+        <div class="row text-center display-flex video-call-container flex-dir-col" ng-show="showCallConatiner.video">
+          <div class="col-xs-12 display-flex video-screen-container padding-none" >
+
+            <div class="margin-auto" style="display:none;">
+              <audio  id="incomingAudio" src="" autoplay='true'></audio>
+            </div> <!-- video element -->
+          </div> <!-- video screen container -->
+          <div class="call-controls col-xs-12" >
+            <div class="row call-controls-container">
+              <div ng-click="muteUnmute()" class="col-xs-4 call-control mic padding-none no-select">
+                <span class="call-control-text">{{micText}}</span>
+                <span class="fa fa-microphone call-control-icon" aria-hidden="true"></span>
+              </div>
+              <div ng-click="speaker()" class="col-xs-4 call-control speaker padding-none no-select">
+                <span class="call-control-text">{{speakerText}}</span>
+                <span class="fa fa-volume-up call-control-icon" aria-hidden="true"></span>
+              </div>
+              <div ng-click="endCall()" class="col-xs-4 call-control end-call padding-none no-select">
+                <span class="call-control-text">End Call</span>
+                <span class="fa fa-phone call-control-icon" aria-hidden="true"></span>
+              </div>
+              <!-- <div class="col-xs-3 call-control switch-to-annotation-call padding-none no-select " style="background-color:{{}}">
+                <span class="call-control-text" >{{callType}}</span>
+                <span class="fa {{callIcon}} call-control-icon" aria-hidden="true"></span>
+              </div> -->
+            </div>
+          </div><!-- /.call-controls -->
+        </div>
+        <div class="row text-center display-flex annotation-call-container flex-dir-col" ng-show="showCallConatiner.annotation">
+          <div class="send-new-image" ng-show="!showPasteImageContainer" ng-click="sendNewImage()">
+            <span>Send New</span>
+            <img src="static/img/Send-Image-Default-192X192.png" style="height:30px;width:30px"></img>
+          </div>
+          <div class="container-fluid display-flex annotaion-image-container" >
+            <!--Image Annotation start -->
+            <div class="annotation-image margin-auto pos-rel" style="display:;">
+              <div screenshot callback-fn="ctrlFn(arg1)" class="pos-rel" style="height:100%;width:100%">
+                <div class="paste-image-container" ng-show="showPasteImageContainer">
+                  <div class="msg-paste-image" style="display:">
+                    <p>Please take a &quot Print Screen &quot of</p>
+                    <p>your application or screen</p>
+                    <p>&amp; Paste Here</p>
+                  </div>
+                  <div class="icon-paste-image">
+                  </div>
+                </div>
+                <canvas id="annotation-canvas" width="640px" height="480px" style="height:100%;width:100%" ng-show="!showPasteImageContainer"></canvas>
+                <img class="screen" id = "background" src="{{image.preview}}" style="display:none"></img>
+              </div>
+            </div>
+            <div class="icon-send-image-container flex-dir-col all-center" ng-show="showSendImageContainer">
+              <div class="icon-send-image cur-pointer" ng-click="sendScreenShot(rawImage)">
+              </div>
+              <span >Send Screenshot</span>
+            </div>
+            <div class="gif-progress-container flex-dir-col all-center" ng-show="showProgressContainer">
+              <div class="gif-progress" >
+              </div>
+              <span>Sending Screenshot, please wait...</span>
+            </div>
+            <!--Image Annotation end -->
+            <div class="margin-auto" style="display:none;">
+              <audio  id="incomingAudio" src="" autoplay='true'></audio>
+            </div> <!-- video element -->
+          </div> <!-- video screen container -->
+          <div class="call-controls col-xs-12" >
+            <div class="row call-controls-container">
+              <div ng-click="muteUnmute()" class="col-xs-4 call-control mic padding-none no-select">
+                <span class="call-control-text">{{micText}}</span>
+                <span class="fa fa-microphone call-control-icon" aria-hidden="true"></span>
+              </div>
+              <div ng-click="speaker()" class="col-xs-4 call-control speaker padding-none no-select">
+                <span class="call-control-text">{{speakerText}}</span>
+                <span class="fa fa-volume-up call-control-icon" aria-hidden="true"></span>
+              </div>
+              <div ng-click="endCall()" class="col-xs-4 call-control end-call padding-none no-select">
+                <span class="call-control-text">End Call</span>
+                <span class="fa fa-phone call-control-icon" aria-hidden="true"></span>
+              </div>
+            </div>
+          </div><!-- /.call-controls -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/ng-template" id="ticketNo.html">
+  <div class="modal-content"  style="background-color:black;border-radius:0px;color:#ddd;">
+    <div class="modal-header">
+      <h3 class="modal-title">Ticket Number</h3>
+    </div>
+    <div class="modal-body">
+      <form name="myForm">
+        <h4>Enter 10 digit Ticket Number</h4>
+        <input style="color:black" type="number" id="dateFrom" ng-model="data.ticketNo" required ng-maxLength="10" ng-minLength="10"/><br/><br>
+        <button id="submit" ng-click="submitRequest($event)" ng-disabled="myForm.$invalid" class="btn btn-info">OK</button>
+      </form>
+    </div>
+  </div>
+</script>

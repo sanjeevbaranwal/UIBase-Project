@@ -1,0 +1,20 @@
+.experts-container {
+  color: #eee;
+}
+.experts-container .expert {
+  background-color: #333;
+  box-shadow: 1px 1px 1px rgba(30,30,30,.5), -1px 1px 1px rgba(30,30,30,.5), 0 1px 1px rgba(10,10,10,.5);
+  border-radius: 2px;
+  border-top: 1px solid #2f2f2f;
+  padding: 10px 15px;
+  margin: 5px auto;
+}
+.experts-container .expert .glyphicon {
+  color: #bbb;
+  cursor: pointer;
+  float: right;
+  margin: auto 10px;
+}
+.experts-container .expert .glyphicon:hover {
+  color: #fff;
+}

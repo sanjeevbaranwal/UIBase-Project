@@ -1,0 +1,19 @@
+.home-container h1,
+.home-container button {
+  font-weight: bold;
+}
+.home-container aside {
+  padding-top: 15px;
+}
+.blue-theme {
+	background-color: #0099ff !important;
+	color: white;
+}
+.display-flex {
+	display: flex;
+}
+.vcenter {
+	 display: flex;
+	 align-items: center;
+	 justify-content: center;
+}

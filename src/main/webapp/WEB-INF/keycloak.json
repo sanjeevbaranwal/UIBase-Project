@@ -1,0 +1,7 @@
+{
+  "realm": "WebUIBase",
+  "auth-server-url": "http://localhost:8080/auth",
+  "ssl-required": "external",
+  "resource": "WebUIBase",
+  "public-client": true
+}

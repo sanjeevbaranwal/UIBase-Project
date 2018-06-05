@@ -1,0 +1,390 @@
+.MenuDropDownBox img, .GenieOptionsColumn img {
+	cursor: pointer;
+}
+
+ .MenuDropDownBox {
+    position: relative;
+    display: inline-block;
+}
+
+.MenuDropDownBox:hover .MenuDropDownBox-Content, .GenieOptionsColumn:hover .GenieOptionsDropDownBox-Content{
+	display: block;
+}
+
+.MenuDropDownBoxTable {
+	display: table;
+    border-collapse: collapse;
+    border-spacing: 0px;	
+}
+
+.MenuDropDownBox-TableRow {	
+	border-bottom: solid 1px grey;
+	display:table-row;
+}
+
+.MenuDropDownBox-TableRow:hover {
+	background-color: #f1f1f1;
+}
+
+.MenuDropDownBox-TableCell {
+	display:table-cell; 
+}
+
+.MenuDropDownBox-Content {
+    display: none;
+    position: absolute;
+    background-color: white; /*#E7ECEB;*/
+    min-width: 180px;
+    box-shadow: 0px 0px 10px 2px rgba(0,0,0,0.75);
+	z-index: 1001;
+	right: 3px; 
+}
+
+.GenieOptionsDropDownBox-Content {
+    display: none;
+    position: absolute;
+    background-color: white; /*#E7ECEB;*/
+    box-shadow: 0px 0px 10px 2px rgba(0,0,0,0.75);
+	z-index: 9999;
+	min-width: 180px;
+	bottom: 9%;
+	left: 2px;
+}
+
+.MenuDropDownBox-Content a, .GenieOptionsDropDownBox-Content a {
+    color: black;
+    padding: 4px 10px;
+    display: block;
+}
+
+#iframe_callback{
+  display: block;
+  border: none;
+  padding: 0px;
+  background: white; /* For browsers that do not support gradients */
+  background: -webkit-radial-gradient(white, grey, black); /* Safari 5.1 to 6.0 */
+  background: -o-radial-gradient(white, grey, black); /* For Opera 11.6 to 12.0 */
+  background: -moz-radial-gradient(white, grey, black); /* For Firefox 3.6 to 15 */
+  background: radial-gradient(white, white, grey, black); /* Standard syntax */
+}
+
+#remoteSMEHeaderText {
+	color: white;
+	font-weight: bold;
+	font-size: 25px;
+	margin-left: 5px;
+}
+
+#remoteSMEFooterText {
+	color: black;
+	font-weight: bold;
+}
+
+#chattingWithText {
+	color: white;
+	font-weight: bold;
+}
+
+#disconnectChat {
+	color: white;
+	font-weight: bold;
+	float: right;
+}
+
+.chatSeparator {
+	color: white;
+    background-color: white;
+    height: 2px;
+    border: 0;
+    margin-bottom: 20px;
+    background-image: -webkit-linear-gradient(left, white, black, white);
+    background-image: -moz-linear-gradient(left, white, black, white);
+    background-image: -ms-linear-gradient(left, white, black, white);
+    background-image: -o-linear-gradient(left, white, black, white);
+}
+
+/* yes no button effects*/
+
+.yesNoBtn, .yesNoBtnNoDisable {
+    border-radius: 5px;
+	min-width:40%;
+	height:20px;
+	text-decoration: none;
+	/* 	margin: auto; */
+	margin-top: 2px;
+	position: relative;
+	display: inline-block;
+	border: none;
+	/* color: white; */
+	color: black;
+	font-weight: bold;
+	background-color: #FFE4C4;
+}
+
+.yesNoBtn:hover{
+	background-color: #DEB887;
+}
+
+/*.yesNoBtn:active {
+  transform: translate(0px, 5px);
+  -webkit-transform: translate(0px, 5px);
+}*/
+
+#yesBtn{
+    /* background-color: green; */
+	background-color: #92d050;
+	
+	/* box-shadow: 0px 4px 0px 0px rgba(0,0,0,0.2); */
+}
+
+#noBtn{
+    /* background-color: #b24141; */ 
+	background-color: #e1b3a1;
+	
+	/* box-shadow: 0px 4px 0px 0px rgba(0,0,0,0.2); */
+}
+
+#yesBtn:hover{
+	  /* background-color: #4ca64c; */
+	  background-color: #74a640;
+}
+
+#noBtn:hover{
+	  /* background-color: #e55353; */
+	  background-color: #e76464;
+}
+
+.disabled {
+  pointer-events: none;  /*The element is never the target of mouse events*/
+  opacity: 0.6;
+}
+
+#showMoreBtn{
+    /* background-color: green; */
+	background-color: #92d050;
+	/* box-shadow: 0px 4px 0px 0px rgba(0,0,0,0.2); */
+}
+
+#showLessBtn{
+    /* background-color: #b24141; */ 
+	background-color: #e1b3a1;	
+	/* box-shadow: 0px 4px 0px 0px rgba(0,0,0,0.2); */
+}
+
+#showMoreBtn:hover{
+	  /* background-color: #4ca64c; */
+	  background-color: #74a640;
+}
+
+#showLessBtn:hover{
+	  /* background-color: #e55353; */
+	  background-color: #e76464;
+}
+
+.morecontent span {
+    display: none;
+}
+
+.morelink {
+    display: block;
+	color: #00009a;
+}
+
+.formTextBoxClass { 
+	background-color: #E7FFFF; 
+	border-radius: 5px; 
+	-webkit-border-radius: 5px; 
+	-moz-border-radius: 5px; 
+	color: black; 
+	cursor: pointer; 
+	margin: 2px 0px;
+	padding: 1px 5px; 
+	width: 100%;
+} 
+
+.formTextBoxClass:hover 
+{ 
+	background-color: #D0FFFF;
+	border: solid 2px #00009a;
+	border-radius: 5px;
+	-webkit-border-radius: 5px; 
+	-moz-border-radius: 5px; 
+} 
+
+.formTextBoxClass:focus 
+{ 
+	background-color: white; 
+	border: solid 2px #00009a;
+	border-radius: 5px;
+	-webkit-border-radius: 5px; 
+	-moz-border-radius: 5px; 	
+} 
+
+::-webkit-input-placeholder {
+    color: #cccccc;
+	font-weight: 100;
+	opacity: 1 !important;
+}
+:-moz-placeholder { /* Firefox 18- */
+    color: grey;
+	font-weight: 100;
+}
+::-moz-placeholder {  /* Firefox 19+ */
+    color: grey;
+	font-weight: 100;
+}
+
+:-ms-input-placeholder {  
+   color: black;
+   font-weight: 100;
+}
+
+::-ms-placeholder {
+    color:brown;
+}
+
+.formBtn {
+  background-color: black;
+  border: none;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-box-shadow: 0px 2px 0px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0px 2px 0px rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 2px 0px rgba(0, 0, 0, 0.5);
+  color: white;
+  cursor: pointer;
+  font-family: 'Nobile', sans-serif;
+  font-weight: 900;
+  margin: 0px 0px;
+  padding: 7px 20px;
+}
+.formBtn:hover {
+  background-color: #505050;
+}
+
+#formSubmitBtn:active {
+  -webkit-box-shadow: inset 0px 2px 2px #000000;
+  -moz-box-shadow: inset 0px 2px 2px #000000;
+  box-shadow: inset 0px 2px 2px #000000;
+  margin-top: 2px;
+  -webkit-transition: all 0.1s ease;
+  -moz-transition: all 0.1s ease;
+  -ms-transition: all 0.1s ease;
+  -o-transition: all 0.1s ease;
+}
+
+#formResetBtn:active {
+  -webkit-box-shadow: inset 0px 2px 2px #000000;
+  -moz-box-shadow: inset 0px 2px 2px #000000;
+  box-shadow: inset 0px 2px 2px #000000;
+  margin-top: 2px;
+  -webkit-transition: all 0.1s ease;
+  -moz-transition: all 0.1s ease;
+  -ms-transition: all 0.1s ease;
+  -o-transition: all 0.1s ease;
+}
+
+.ibanShowMoreBtn, .ibanShowMoreBtnEverAnimated {
+   display: inline-block;
+   background: url('../images/thinBlueRightArrow.png') no-repeat right center;
+   background-position: 95% center;
+   background-color: #9cd461;
+   color: rgb(30,100,145);
+   padding-left: 0px;
+	background-position: 95% center;
+    -webkit-animation: animate 0.5s infinite;
+}
+.ibanShowMoreBtnEverAnimated {
+   background-color: #ffb732;
+}
+.ibanShowMoreBtn:hover{
+    background-color: #bde296;
+}
+
+.ibanShowMoreBtnEverAnimated:hover {
+    background-color: #ffd27f;
+}
+
+@-webkit-keyframes animate {
+    50% {
+        background-position: 100% center;
+    }
+}
+
+.suggestionBtn{
+   background-color: #009EE0;
+   color: white;
+    border-radius: 5px;
+   margin: auto;
+	position: relative;
+	display: inline-block;
+	border: 1px solid black;
+	margin: 2px;
+	padding:1px;
+}
+
+.fade {
+   opacity: 1;
+   transition: opacity .25s ease-in-out;
+   -moz-transition: opacity .25s ease-in-out;
+   -webkit-transition: opacity .25s ease-in-out;
+}
+
+.fade:hover {
+      opacity: 0.5;
+}
+
+.magnificTable {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 20px;
+  border-collapse: collapse !important;
+  border-spacing: 0px;  
+}
+
+.magnificTable tr,
+.magnificTable th,
+.magnificTable td
+ {
+  padding: 1px;
+  line-height: 1.5;
+  text-align: center;
+  vertical-align: middle;
+  border-top: 1px solid grey;
+}
+
+.magnificTable tr:first-child,
+.magnificTable tr:first-child:hover {
+  background-color: antiquewhite;
+  font-weight: bold;
+}
+
+.magnificTable tr.selectAll,
+.magnificTable tr.selectAll:hover {
+  background-color: #DDEFEF;
+  font-weight: bold;
+}
+
+.magnificTable tr:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+
+.magnificTable td input {
+  text-align: center
+}
+
+.magnificTable td a {
+  display: block;
+  color: black;
+  text-decoration:none;
+}
+
+.magnificTable td a:hover {
+  text-decoration:none;
+}
+.magnificTable td input[type=checkbox] {
+  pointer-events: none;
+}
+

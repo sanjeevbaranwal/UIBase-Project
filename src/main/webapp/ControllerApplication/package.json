@@ -1,0 +1,16 @@
+{
+  "name": "node-chat-server",
+  "version": "1.0.0",
+  "description": "simple node chat server and host controller",
+  "main": "host_controller.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gaurav Srivastava",
+  "license": "ISC",
+  "dependencies": {
+    "robotjs": "^0.4.7",
+    "vkey": "^1.0.1",
+    "ws": "^3.2.0"
+  }
+}

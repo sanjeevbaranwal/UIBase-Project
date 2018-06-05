@@ -1,0 +1,38 @@
+.library-container .row.indexes>* {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+.library-container .panel-heading {
+  padding: 7px 10px;
+}
+.library-container th[data-orderby] {
+  cursor: pointer;
+}
+/******** Overlay Card ********/
+.overlay {
+  background-color: rgba(20,20,20,.7);
+  display: none;
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1040;
+}
+.overlay .panel {
+  background-color: #404040;
+  box-shadow: 1px 1px 1px rgba(10,10,10,.5), -1px 1px 1px rgba(10,10,10,.5), 0 2px 2px rgba(4,4,4,.5);
+  color: #fff;
+  font-size: 16px;
+  margin: auto;
+  max-width: 90%;
+  position: relative;
+  width: 540px;
+}
+/******** End Overlay Card ********/
+
+.downloadAndViewIcon{
+  float: right;
+  font-size: 20px;
+  margin-right: 7%;
+}

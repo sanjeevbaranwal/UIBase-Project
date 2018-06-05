@@ -1,0 +1,144 @@
+@keyframes example {
+  from {background-color: #afaaaa;
+    border : 3px outset #afaaaa;
+  }
+  to {background-color: #990000;
+    border : 3px outset #880000;
+  }
+}
+.screen-capturing {
+  animation-name: example;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+.annotation-call-container .annotaion-image-container {
+  height: 100%;
+  margin: 50px 0;
+  position: relative;
+}
+.annotation-call-container .annotation-image {
+  background-color: rgba(100,100,100,0.5);
+  border: 2px dashed #0099ff;
+  height: 100%;
+  width: 100%;
+  max-height: 480px;
+  max-width: 640px;
+}
+.annotation-call-container .icon-paste-image{
+  height: 100px;
+  width: 100px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+.annotation-call-container .icon-send-image,
+.annotation-call-container .gif-progress{
+  height: 100px;
+  width: 100px;
+}
+.annotation-call-container .icon-send-image-container,
+.annotation-call-container .gif-progress-container{
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(50,50,50,0.6);
+}
+
+.annotation-call-container .icon-paste-image{
+  background-image: url('../../static/img/Paste-Default-192X192.png');
+  background-size: contain;
+}
+.annotation-call-container .icon-send-image{
+  background-image: url('../../static/img/Send-Image-Default-192X192.png');
+  background-size: contain;
+}
+.annotation-call-container .icon-send-image:active{
+  background-image: url('../../static/img/Send-Image-Pressed-192X192.png');
+  background-size: contain;
+}
+.annotation-call-container .gif-progress{
+  background-image: url('../../static/img/Progress-FA.gif');
+  background-size: contain;
+}
+.annotation-call-container .send-new-image{
+  position: absolute;
+  top: 40px;
+  right:10px;
+  width: auto;
+  height: 30px;
+  cursor: pointer;
+}
+.call-container .annotation-call-container .msg-paste-image{
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translate(-50%);
+}
+.video-call-container,
+.annotation-call-container,
+.incoming-call-container,
+.outgoing-call-container {
+  height: calc(100% - 41px);
+}
+.call-controls {
+  bottom: 0.6px;
+  position: absolute;
+}
+.call-controls {
+  bottom: 0.6px;
+  position: absolute;
+}
+.call-controls .call-control {
+  background-color: #0099ff;
+  border-right: 1px solid #ccc;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  height: 50px;
+}
+.video-call-container .loading-div {
+  margin: auto;
+  height : 45px;
+  width : 45px;
+  padding-top: 13px;
+  text-align: center;
+  background-image: url('../img/loading-white.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+.video-call-container .call-status-div {
+  margin: auto;
+  text-align: center;
+}
+.video-call-container .video-screen-container,
+.incoming-call-container .incoming-screen-container,
+.outgoing-call-container .outgoing-screen-container {
+  /*border: 1px solid #555;*/
+  height: calc(100%);
+  overflow: auto;
+}
+.call-controls .call-control:last-child {
+  border-right: none;
+}
+.call-controls .call-control.disabled {
+  color: #bbb;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+.call-controls .call-control:hover {
+  background-color: #0088ee;
+}
+.call-controls .call-control:active {
+  background-color: #0077dd;
+}
+.call-controls .call-control span {
+  margin: auto;
+}
+.call-controls .call-control span.call-control-icon {
+  font-size: 20px;
+}
